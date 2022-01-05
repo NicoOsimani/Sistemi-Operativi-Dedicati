@@ -1,4 +1,4 @@
-libjpeg.c:44:6:MX_LIBJPEG_Init	4	static
-libjpeg.c:56:6:resize_jpeg_to32x32	584	static
-libjpeg.c:103:6:SaveResizedImageToBuffer	24	static
-libjpeg.c:117:6:jpeg_decode	32	static
+libjpeg.c:45:6:MX_LIBJPEG_Init	4	static
+libjpeg.c:59:6:resize_jpeg_to32x32	584	static
+libjpeg.c:106:6:SaveResizedImageToBuffer	24	static
+libjpeg.c:118:6:jpeg_decode	32	static

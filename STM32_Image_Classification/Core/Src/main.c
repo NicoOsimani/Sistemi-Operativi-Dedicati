@@ -35,6 +35,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "global.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,10 +74,15 @@ void MX_USB_HOST_Process(void);
 static void LCD_Config(void);
 static uint8_t Jpeg_CallbackFunction( uint32_t DataLength);
 void Display_File_JPG(void);
+int test_JPG(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+__attribute__((section(".ccmram"))) char _folder[70];
+int do_test = 0;
+int started = 0;
 
 /* USER CODE END 0 */
 
@@ -84,6 +90,7 @@ void Display_File_JPG(void);
   * @brief  The application entry point.
   * @retval int
   */
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -123,19 +130,22 @@ int main(void)
   printf("LCD config\r\n");
   LCD_Config();
   printf("LCD config OK\r\n");
-  BSP_LCD_DisplayStringAtLine(1,(uint8_t*)"STM32F429I-DISC1");
-  BSP_LCD_DisplayStringAtLine(2,(uint8_t*)"Image Classification");
-  BSP_LCD_DisplayStringAtLine(3,(uint8_t*)"JPG image 256x256");
-  BSP_LCD_DisplayStringAtLine(4,(uint8_t*)"From USB Flash Disk");
+  BSP_LCD_DisplayStringAtLine(0,(uint8_t*)"STM32F429I-DISC1");
+  BSP_LCD_DisplayStringAtLine(1,(uint8_t*)"Image Classification");
+  BSP_LCD_DisplayStringAtLine(2,(uint8_t*)"JPG image 256x256");
+  BSP_LCD_DisplayStringAtLine(3,(uint8_t*)"From USB Flash Disk");
+  BSP_LCD_DisplayStringAtLine(5,(uint8_t*)"Demo mode");
 
-  HAL_Delay(2000);
+  HAL_Delay(4000);
   BSP_LCD_Clear(LCD_COLOR_BLACK);
+  started = 1;
+  int check = 0;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+  while (check==0)
   {
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
@@ -143,15 +153,19 @@ int main(void)
     /* USER CODE BEGIN 3 */
   switch(Appli_state){
   case APPLICATION_READY:
-  	printf("Open file\r\n");
+    printf("Open file\r\n");
+    if (do_test == 1){
+      check = test_JPG();
+      }
+    else{
       Display_File_JPG();
-  	break;
+      }
+    break;
   case APPLICATION_IDLE:
-	  printf("IDLE\r\n");
+    printf("IDLE\r\n");
   default:
-  	break;
+    break;
   }
-
   }
   /* USER CODE END 3 */
 }
@@ -233,7 +247,6 @@ static void LCD_Config(void)
 
 static uint8_t Jpeg_CallbackFunction( uint32_t DataLength)
 {
-
   RGB_matrix =  (RGB_typedef*)_aucLine;
   uint32_t  ARGB32Buffer[240];
   uint32_t counter = 0;
@@ -249,7 +262,6 @@ static uint8_t Jpeg_CallbackFunction( uint32_t DataLength)
 
     *(__IO uint32_t *)(LCD_BUFFER + (counter*4) + (offset - LCD_BUFFER)) = ARGB32Buffer[counter];
   }
-
   offset += (DataLength + 240);
   return 0;
 }
@@ -258,32 +270,77 @@ void Display_File_JPG(void){
 	FRESULT res;
 	int i;
 
-	if (f_chdir("/media")==FR_OK){
+	if (f_chdir("/demo")==FR_OK){
 		res=f_findfirst(&dir, &fno, "","*.j*g");
-
 		while((res == FR_OK) && (fno.fname[0])){
-	     offset = 0xD0000000;
-		 memset(_aucLine,'\0',sizeof(_aucLine));
-		 printf("Open file %s\r\n", fno.fname);
-		 for(i=9;i<15;i++){
-		   BSP_LCD_ClearStringLine(i);
-     }
-	     jpeg_decode((uint8_t*)fno.fname, 240, Jpeg_CallbackFunction);
-	     resize_jpeg_to32x32((uint8_t*)fno.fname, 240);
-          printf("Jpeg decode finished\r\n");
-          MX_X_CUBE_AI_Process();
-	     res = f_findnext(&dir,&fno);
-		 HAL_Delay(2000);
+	    offset = 0xD0000000;
+      memset(_aucLine,'\0',sizeof(_aucLine));
+      printf("Open file %s\r\n", fno.fname);
+      for(i=11;i<14;i++){
+		    BSP_LCD_ClearStringLine(i);
+      }
+	    jpeg_decode((uint8_t*)fno.fname, 240, Jpeg_CallbackFunction);
+	    resize_jpeg_to32x32((uint8_t*)fno.fname, 240);
+      printf("Jpeg decode finished\r\n");
+      MX_X_CUBE_AI_Process();
+	    res = f_findnext(&dir,&fno);
+		  HAL_Delay(2000);
 		}
-
 		f_closedir(&dir);
 		printf("Finished %d\r\n",res);
-
 	}
 	else{
 	}
-
 }
+
+int test_JPG(void){
+	FRESULT res;
+  const char* classes_folders[] = {"plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"};
+  int j;
+
+  for(j=0;j<10;j++){
+    sprintf(_folder,"/test/%s",classes_folders[j]);
+    if (f_chdir(_folder)==FR_OK){
+      res=f_findfirst(&dir, &fno, "","*.j*g");
+      while((res == FR_OK) && (fno.fname[0])){
+        offset = 0xD0000000;
+        memset(_aucLine,'\0',sizeof(_aucLine));
+        printf("Open file %s\r\n", fno.fname);
+        resize_jpeg_to32x32((uint8_t*)fno.fname, 240);
+        printf("Jpeg decode finished\r\n");
+        test(j);
+        res = f_findnext(&dir,&fno);
+      }
+      f_closedir(&dir);
+      printf("Finished %d\r\n",res);
+    }
+    else{
+    return 0;
+	  }
+	}
+  return 1;
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == GPIO_PIN_0)
+	{
+    if(started==0)
+    {
+      if(do_test==0)
+      {
+        do_test = 1;
+        BSP_LCD_DisplayStringAtLine(5,(uint8_t*)"Test mode");
+      }
+      else
+      {
+        do_test = 0;
+        BSP_LCD_DisplayStringAtLine(5,(uint8_t*)"Demo mode");
+      }
+    }
+  }
+}
+
 /* USER CODE END 4 */
 
 /**

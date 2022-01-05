@@ -75,8 +75,8 @@ all: main-build
 main-build: STM32_Image_Classification.elf secondary-outputs
 
 # Tool invocations
-STM32_Image_Classification.elf: $(OBJS) $(USER_OBJS) C:\Users\Nico\STM32CubeIDE\workspace_1.8.0\STM32_Image_Classification\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "STM32_Image_Classification.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Nico\STM32CubeIDE\workspace_1.8.0\STM32_Image_Classification\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_Image_Classification.map" -Wl,--gc-sections -static -L../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+STM32_Image_Classification.elf: $(OBJS) $(USER_OBJS) C:\Users\Nico\Desktop\Sistemi_operativi\Progetto\Sistemi-Operativi-Dedicati\STM32_Image_Classification\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "STM32_Image_Classification.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Nico\Desktop\Sistemi_operativi\Progetto\Sistemi-Operativi-Dedicati\STM32_Image_Classification\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_Image_Classification.map" -Wl,--gc-sections -static -L../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

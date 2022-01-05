@@ -56,23 +56,28 @@
 
 /* USER CODE BEGIN includes */
 #include "global.h"
+
 /* USER CODE END includes */
 /* USER CODE BEGIN initandrun */
 #include <stdlib.h>
 
 /* Global handle to reference the instance of the NN */
- AI_ALIGNED(4)
- static ai_i8 in_data[AI_NETWORK_IN_1_SIZE_BYTES];
+AI_ALIGNED(4)
+static ai_i8 in_data[AI_NETWORK_IN_1_SIZE_BYTES];
 
- AI_ALIGNED(4)
- static ai_i8 out_data[AI_NETWORK_OUT_1_SIZE_BYTES];
+AI_ALIGNED(4)
+static ai_i8 out_data[AI_NETWORK_OUT_1_SIZE_BYTES];
 
- static ai_handle network = AI_HANDLE_NULL ;
-  static ai_buffer ai_input[AI_NETWORK_IN_NUM] = AI_NETWORK_IN ;
-  static ai_buffer ai_output[AI_NETWORK_OUT_NUM] = AI_NETWORK_OUT ;
- const char* cifar10_label[] = {"PLANE", "CAR  ", "BIRD ", "CAT  ", "DEER ", "DOG  ", "FROG ", "HORSE", "SHIP ", "TRUCK"};
- __attribute__((section(".ccmram"))) char msg[70];
- uint32_t nn_inference_time;
+static ai_handle network = AI_HANDLE_NULL ;
+static ai_buffer ai_input[AI_NETWORK_IN_NUM] = AI_NETWORK_IN ;
+static ai_buffer ai_output[AI_NETWORK_OUT_NUM] = AI_NETWORK_OUT ;
+const char* cifar10_label[] = {"Plane:", "Car:  ", "Bird: ", "Cat:  ", "Deer: ", "Dog:  ", "Frog: ", "Horse:", "Ship: ", "Truck:"};
+__attribute__((section(".ccmram"))) char msg[70];
+uint32_t nn_inference_time;
+uint32_t tot_inference_time;
+int right_image;
+int image_number;
+float accuracy;
 
 /*
  * Init function to create and initialize a NN.
@@ -101,7 +106,6 @@ int aiInit(const ai_u8* activations)
         network = AI_HANDLE_NULL;
 	    return -2;
     }
-
     return 0;
 }
 
@@ -130,7 +134,6 @@ int aiRun(const void *in_data, void *out_data)
         // ...
         return err.code;
     }
-
     return 0;
 }
 /* USER CODE END initandrun */
@@ -154,44 +157,92 @@ void MX_X_CUBE_AI_Process(void)
 {
     /* USER CODE BEGIN 1 */
     int res;
-    int16_t i,x=9;
+    int16_t i,x=11;
+
+    printf("Demo\r\n");
+    BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"Demo");
+    /* Perform the inference */
+    RGB24_to_Float_Asym(&resize_image_buffr[0], (uint8_t*)&in_data[0], 32* 32);
+    res = aiRun(in_data, out_data);
+    if (res) {
+        printf("AI error %d\r\n",res);
+        BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"AI error");
+        return;
+    }
+    printf("Display result\r\n");
+    AI_Output_Display((uint8_t*)out_data);
+    BSP_LCD_DisplayStringAtLine(9,(uint8_t*)"Prediction:");
+    for(i=9;i>=7;i--){
+        if(predictionval[i]>1){
+            sprintf(msg,"%s %.2f%%",cifar10_label[class_name_index[i]],predictionval[i]);
+            printf("Pred. %s Confi. %.2f%%\r\n",cifar10_label[class_name_index[i]],predictionval[i]);
+            BSP_LCD_DisplayStringAtLine(x++,(uint8_t*)msg);
+        }
+    }
+    /* USER CODE END 1 */
+}
+
+void test(int class_index)
+{
+    int res;
 
     uint32_t Tinf1;
     uint32_t Tinf2;
 
-    printf("Classification\r\n");
-    BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"Classification");
-//        /* Perform the inference */
-        RGB24_to_Float_Asym(&resize_image_buffr[0], (uint8_t*)&in_data[0], 32* 32);
-        Tinf1 = HAL_GetTick();
-        res = aiRun(in_data, out_data);
-        Tinf2 = HAL_GetTick();
-        nn_inference_time = ((Tinf2>Tinf1)?(Tinf2-Tinf1):((1<<24)-Tinf1+Tinf2));
-        if (res) {
-            // ...
-        	printf("AI error %d\r\n",res);
-        	BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"AI error");
-            return;
+    printf("Test\r\n");
+    BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"Test");
+    /* Perform the inference */
+    RGB24_to_Float_Asym(&resize_image_buffr[0], (uint8_t*)&in_data[0], 32* 32);
+    Tinf1 = HAL_GetTick();
+    res = aiRun(in_data, out_data);
+    Tinf2 = HAL_GetTick();
+    nn_inference_time = ((Tinf2>Tinf1)?(Tinf2-Tinf1):((1<<24)-Tinf1+Tinf2));
+    tot_inference_time = tot_inference_time + nn_inference_time;
+    if (res) {
+        printf("AI error %d\r\n",res);
+        BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"AI error");
+        return;
+    }
+    printf("Display result\r\n");
+    AI_Output_Display((uint8_t*)out_data);
+    if(class_name_index[9]==class_index){
+        right_image=right_image +1;
+    }
+    image_number = image_number + 1;
+    if(image_number==IMAGE_NUMBER){
+        sprintf(msg, "Image: %d/%d", image_number, IMAGE_NUMBER);
+        BSP_LCD_DisplayStringAtLine(0,(uint8_t*)msg);
+
+        accuracy = (float)right_image/image_number*100;
+        if(accuracy==accuracy){
+            sprintf(msg, "Accuracy: %.2f%%  ", accuracy);
+            BSP_LCD_DisplayStringAtLine(2,(uint8_t*)msg);
         }
 
-        printf("Display result\r\n");
-        AI_Output_Display((uint8_t*)out_data);
-
-        BSP_LCD_DisplayStringAtLine(x++,(uint8_t*)"Prediction/Confidence");
-        for(i=9;i>=7;i--){
-        if(predictionval[i]>0){
-        	sprintf(msg,"%s (%.2f%%)",cifar10_label[class_name_index[i]],predictionval[i]);
-        	printf("Pred. %s Confi. %.2f%%\r\n",cifar10_label[class_name_index[i]],predictionval[i]);
-        	BSP_LCD_DisplayStringAtLine(x++,(uint8_t*)msg);
-        }
-
-        }
         sprintf(msg, "Inference: %ldms", nn_inference_time);
-        BSP_LCD_DisplayStringAtLine(x++,(uint8_t*)msg);
-        //sprintf(msg, "Inference: %ldms", nn_inference_time); msg diventa l'accuracy
-        BSP_LCD_DisplayStringAtLine(x++,(uint8_t*)msg);
+        BSP_LCD_DisplayStringAtLine(4,(uint8_t*)msg);
 
-    /* USER CODE END 1 */
+        HAL_Delay(2000);
+
+        sprintf(msg, "Total inf.: %.2fs", (float)tot_inference_time/1000);
+        BSP_LCD_DisplayStringAtLine(4,(uint8_t*)msg);
+
+        printf("Test completed\r\n");
+        BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"Test completed");
+    }
+    else{
+        sprintf(msg, "Image: %d/%d", image_number, IMAGE_NUMBER);
+        BSP_LCD_DisplayStringAtLine(0,(uint8_t*)msg);
+
+        accuracy = (float)right_image/image_number*100;
+        if(accuracy==accuracy){
+            sprintf(msg, "Accuracy: %.2f%%  ", accuracy);
+            BSP_LCD_DisplayStringAtLine(2,(uint8_t*)msg);
+        }
+
+        sprintf(msg, "Inference: %ldms", nn_inference_time);
+        BSP_LCD_DisplayStringAtLine(4,(uint8_t*)msg);
+    }
 }
 
 #ifdef __cplusplus

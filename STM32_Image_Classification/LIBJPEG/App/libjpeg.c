@@ -24,6 +24,7 @@
 
 /* USER CODE BEGIN 0 */
 #include "global.h"
+
 /* USER CODE END 0 */
 
 /* USER CODE BEGIN 1 */
@@ -53,123 +54,123 @@ void MX_LIBJPEG_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void SaveResizedImageToBuffer(uint8_t* buffer);
+
 void resize_jpeg_to32x32(uint8_t *filename, uint32_t width){
-	  /* Decode JPEG Image */
-	  JSAMPROW buffer[2] = {0}; /* Output row buffer */
-	  FIL file;
-	  if(f_open(&file, (char*)filename, FA_READ) != FR_OK)
-	  {
-	 	 printf("Open file error\r\n");
-	 	 return;
-	  }
-	  buffer[0] = &_aucLine[0];
+	/* Decode JPEG Image */
+	JSAMPROW buffer[2] = {0}; /* Output row buffer */
+	FIL file;
+	if(f_open(&file, (char*)filename, FA_READ) != FR_OK)
+	{
+		printf("Open file error\r\n");
+		return;
+	}
+	buffer[0] = &_aucLine[0];
 
-	  /* Step 1: allocate and initialize JPEG decompression object */
-	  cinfo.err = jpeg_std_error(&jerr);
+	/* Step 1: allocate and initialize JPEG decompression object */
+	cinfo.err = jpeg_std_error(&jerr);
 
-	  /* Initialize the JPEG decompression object */
-	  jpeg_create_decompress(&cinfo);
+	/* Initialize the JPEG decompression object */
+	jpeg_create_decompress(&cinfo);
 
-	  jpeg_stdio_src (&cinfo, &file);
+	jpeg_stdio_src (&cinfo, &file);
 
-	  /* Step 3: read image parameters with jpeg_read_header() */
-	  jpeg_read_header(&cinfo, TRUE);
+	/* Step 3: read image parameters with jpeg_read_header() */
+	jpeg_read_header(&cinfo, TRUE);
 
-	  /* Step 4: set parameters for decompression */
-	  cinfo.dct_method = JDCT_FLOAT;
+	/* Step 4: set parameters for decompression */
+	cinfo.dct_method = JDCT_FLOAT;
 
-	  /* Step 5: start decompressor */
-	  cinfo.scale_num=1;
-	  cinfo.scale_denom=8;
-	  jpeg_start_decompress(&cinfo);
+	/* Step 5: start decompressor */
+	cinfo.scale_num=1;
+	cinfo.scale_denom=8;
+	jpeg_start_decompress(&cinfo);
 
-	  printf("Jpeg size %dx%d\r\n",cinfo.output_width, cinfo.output_height);
+	printf("Jpeg size %dx%d\r\n",cinfo.output_width, cinfo.output_height);
 
-	  resizedImageCounter=0;
-	  while (cinfo.output_scanline < cinfo.output_height)
-	  {
-		  (void) jpeg_read_scanlines(&cinfo, buffer, 1);
-		  SaveResizedImageToBuffer(buffer[0]);
-	  }
+	resizedImageCounter=0;
+	while (cinfo.output_scanline < cinfo.output_height)
+	{
+		(void) jpeg_read_scanlines(&cinfo, buffer, 1);
+		SaveResizedImageToBuffer(buffer[0]);
+	}
 
-	  /* Step 6: Finish decompression */
-	  jpeg_finish_decompress(&cinfo);
+	/* Step 6: Finish decompression */
+	jpeg_finish_decompress(&cinfo);
 
-	  /* Step 7: Release JPEG decompression object */
-	  jpeg_destroy_decompress(&cinfo);
-	  f_close(&file);
+	/* Step 7: Release JPEG decompression object */
+	jpeg_destroy_decompress(&cinfo);
+	f_close(&file);
 }
 
 void SaveResizedImageToBuffer(uint8_t* buffer){
-	  uint32_t i = 0;
-	  RGB_matrix =  (RGB_typedef*)_aucLine;
+	uint32_t i = 0;
+	RGB_matrix =  (RGB_typedef*)_aucLine;
 
 	RGB_matrix =  (RGB_typedef*)buffer;
-	  for(i=0;i<32;i++){
-		  resize_image_buffr[resizedImageCounter++]=RGB_matrix[i].R;
-		  resize_image_buffr[resizedImageCounter++]=RGB_matrix[i].G;
-		  resize_image_buffr[resizedImageCounter++]=RGB_matrix[i].B;
-
-	  }
-
+	for(i=0;i<32;i++){
+		resize_image_buffr[resizedImageCounter++]=RGB_matrix[i].R;
+		resize_image_buffr[resizedImageCounter++]=RGB_matrix[i].G;
+		resize_image_buffr[resizedImageCounter++]=RGB_matrix[i].B;
+	}
 }
 
 void jpeg_decode(uint8_t *filename, uint32_t width, uint8_t (*callback)( uint32_t))
 {
-	  /* Decode JPEG Image */
-	 /* Output row buffer */
-	  uint32_t row_stride = 0; /* physical row width in image buffer */
+	/* Decode JPEG Image */
+	/* Output row buffer */
+	uint32_t row_stride = 0; /* physical row width in image buffer */
 
-   if(f_open(&file, (char*)filename, FA_READ) != FR_OK)
-   {
-  	 printf("Open file error\r\n");
-  	 return;
-   }
+	if(f_open(&file, (char*)filename, FA_READ) != FR_OK)
+	{
+		printf("Open file error\r\n");
+		return;
+   	}
 
-	  buffer[0] = &_aucLine[0];
+	buffer[0] = &_aucLine[0];
 
-	  /* Step 1: allocate and initialize JPEG decompression object */
-	  cinfo.err = jpeg_std_error(&jerr);
+	/* Step 1: allocate and initialize JPEG decompression object */
+	cinfo.err = jpeg_std_error(&jerr);
 
-	  /* Initialize the JPEG decompression object */
-	  jpeg_create_decompress(&cinfo);
+	/* Initialize the JPEG decompression object */
+	jpeg_create_decompress(&cinfo);
 
-      jpeg_stdio_src (&cinfo, &file);
+	jpeg_stdio_src (&cinfo, &file);
 
-	  /* Step 3: read image parameters with jpeg_read_header() */
-      jpeg_read_header(&cinfo, TRUE);
+	/* Step 3: read image parameters with jpeg_read_header() */
+	jpeg_read_header(&cinfo, TRUE);
 
-	  /* Step 4: set parameters for decompression */
-	  cinfo.dct_method = JDCT_IFAST;
-	  cinfo.scale_num=1;
-	  cinfo.scale_denom=2;
+	/* Step 4: set parameters for decompression */
+	cinfo.dct_method = JDCT_IFAST;
+	cinfo.scale_num=1;
+	cinfo.scale_denom=2;
 
-	  /* Step 5: start decompressor */
-	  jpeg_start_decompress(&cinfo);
+	/* Step 5: start decompressor */
+	jpeg_start_decompress(&cinfo);
 
-	  printf("Output %d x %d\r\n",cinfo.output_width, cinfo.output_height);
+	printf("Output %d x %d\r\n",cinfo.output_width, cinfo.output_height);
 
-	  row_stride = width * 3;
+	row_stride = width * 3;
 
     if((cinfo.output_height==128)&&(cinfo.output_width==128)){
-	  while (cinfo.output_scanline < cinfo.output_height)
-	  {
-	    (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+		while (cinfo.output_scanline < cinfo.output_height)
+		{
+			(void) jpeg_read_scanlines(&cinfo, buffer, 1);
 
-	    if (callback(row_stride) != 0)
-	    {
-	      break;
-	    }
-	  }
+			if (callback(row_stride) != 0)
+			{
+				break;
+			}
+		}
     }
 
-	  /* Step 6: Finish decompression */
-	  jpeg_finish_decompress(&cinfo);
+	/* Step 6: Finish decompression */
+	jpeg_finish_decompress(&cinfo);
 
-	  /* Step 7: Release JPEG decompression object */
-	  jpeg_destroy_decompress(&cinfo);
+	/* Step 7: Release JPEG decompression object */
+	jpeg_destroy_decompress(&cinfo);
 
-	  f_close(&file);
+	f_close(&file);
 }
 
 /* USER CODE END 4 */

@@ -29,9 +29,10 @@
 #include "jpeglib.h"
 
 /* USER CODE BEGIN 0 */
- void jpeg_decode(uint8_t *filename, uint32_t width,  uint8_t (*callback)(uint32_t));
- void resize_jpeg_to32x32(uint8_t *filename, uint32_t width);
- /* USER CODE END 0 */
+void jpeg_decode(uint8_t *filename, uint32_t width,  uint8_t (*callback)(uint32_t));
+void resize_jpeg_to32x32(uint8_t *filename, uint32_t width);
+
+/* USER CODE END 0 */
 
 /* Global variables ---------------------------------------------------------*/
 

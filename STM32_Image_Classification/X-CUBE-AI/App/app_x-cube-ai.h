@@ -81,6 +81,7 @@
 
 void MX_X_CUBE_AI_Init(void);
 void MX_X_CUBE_AI_Process(void);
+void test(int);
 int aiInit(const ai_u8* activations);
 int aiRun(const void *in_data, void *out_data);
 

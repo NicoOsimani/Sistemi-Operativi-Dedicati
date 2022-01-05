@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_it.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -87,7 +88,7 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
-	BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"HARD FAULT");
+	//BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"HARD FAULT");
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
@@ -95,7 +96,6 @@ void HardFault_Handler(void)
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }
-
 /**
   * @brief This function handles Memory management fault.
   */
@@ -256,6 +256,16 @@ void DMA2D_IRQHandler(void)
   /* USER CODE END DMA2D_IRQn 1 */
 }
 
+void EXTI0_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI0_IRQn 0 */
+
+  /* USER CODE END EXTI0_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+  /* USER CODE BEGIN EXTI0_IRQn 1 */
+
+  /* USER CODE END EXTI0_IRQn 1 */
+}
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

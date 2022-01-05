@@ -23,6 +23,10 @@
 #include "stm32f429i_discovery_lcd.h"
 #include "stm32f429i_discovery_sdram.h"
 
+// set the number of images in the dataset for test mode
+#define IMAGE_NUMBER 50
+
+
 typedef struct RGB
 {
   uint8_t B;

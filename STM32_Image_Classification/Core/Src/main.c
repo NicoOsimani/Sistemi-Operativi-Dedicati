@@ -116,9 +116,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_CRC_Init();
-  //MX_DMA2D_Init();
-  //MX_FMC_Init();
-  //MX_LTDC_Init();
   MX_SPI5_Init();
   MX_USART1_UART_Init();
   MX_USB_HOST_Init();
@@ -151,21 +148,34 @@ int main(void)
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
-  switch(Appli_state){
-  case APPLICATION_READY:
-    printf("Open file\r\n");
-    if (do_test == 1){
-      check = test_JPG();
-      }
-    else{
-      Display_File_JPG();
-      }
-    break;
-  case APPLICATION_IDLE:
-    printf("IDLE\r\n");
-  default:
-    break;
-  }
+    switch(Appli_state){
+      case APPLICATION_READY:
+        printf("Open file\r\n");
+        if (do_test == 1){
+          check = test_JPG();
+        }
+        else{
+          Display_File_JPG();
+        }
+        break;
+      case APPLICATION_IDLE:
+        printf("IDLE\r\n");
+        if (do_test == 1){
+          BSP_LCD_DisplayStringAtLine(0,(uint8_t*)"Test waiting for USB");
+        }
+        else{
+          BSP_LCD_DisplayStringAtLine(0,(uint8_t*)"Demo waiting for USB");
+        }
+        break;
+      case APPLICATION_DISCONNECT:
+        if (do_test == 1){
+          BSP_LCD_DisplayStringAtLine(6,(uint8_t*)"Invalid test");
+          BSP_LCD_DisplayStringAtLine(7,(uint8_t*)"Restart application");
+        }
+        break;
+      default:
+        break;
+    }
   }
   /* USER CODE END 3 */
 }
@@ -298,6 +308,7 @@ int test_JPG(void){
   const char* classes_folders[] = {"plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"};
   int j;
 
+  BSP_LCD_ClearStringLine(0);
   for(j=0;j<10;j++){
     sprintf(_folder,"/test/%s",classes_folders[j]);
     if (f_chdir(_folder)==FR_OK){

@@ -29,7 +29,6 @@
 #include "usart.h"
 #include "usb_host.h"
 #include "gpio.h"
-#include "fmc.h"
 #include "app_x-cube-ai.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -60,6 +59,7 @@ __attribute__((section(".ccmram"))) FILINFO fno;
 
 uint32_t offset = 0xD0000000;
 RGB_typedef *RGB_matrix;
+
 __attribute__((section(".ccmram"))) uint8_t _aucLine[2048] ;
 
 uint8_t resize_image_buffr[32*32*3] __attribute__((section(".ccmram")));
@@ -272,6 +272,7 @@ static uint8_t Jpeg_CallbackFunction( uint32_t DataLength)
 
     *(__IO uint32_t *)(LCD_BUFFER + (counter*4) + (offset - LCD_BUFFER)) = ARGB32Buffer[counter];
   }
+
   offset += (DataLength + 240);
   return 0;
 }
@@ -282,10 +283,12 @@ void Display_File_JPG(void){
 
 	if (f_chdir("/demo")==FR_OK){
 		res=f_findfirst(&dir, &fno, "","*.j*g");
+
 		while((res == FR_OK) && (fno.fname[0])){
 	    offset = 0xD0000000;
       memset(_aucLine,'\0',sizeof(_aucLine));
       printf("Open file %s\r\n", fno.fname);
+
       for(i=11;i<14;i++){
 		    BSP_LCD_ClearStringLine(i);
       }
@@ -309,10 +312,13 @@ int test_JPG(void){
   int j;
 
   BSP_LCD_ClearStringLine(0);
+  
   for(j=0;j<10;j++){
     sprintf(_folder,"/test/%s",classes_folders[j]);
+
     if (f_chdir(_folder)==FR_OK){
       res=f_findfirst(&dir, &fno, "","*.j*g");
+      
       while((res == FR_OK) && (fno.fname[0])){
         offset = 0xD0000000;
         memset(_aucLine,'\0',sizeof(_aucLine));

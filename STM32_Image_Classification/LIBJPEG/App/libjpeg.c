@@ -60,6 +60,7 @@ void resize_jpeg_to32x32(uint8_t *filename, uint32_t width){
 	/* Decode JPEG Image */
 	JSAMPROW buffer[2] = {0}; /* Output row buffer */
 	FIL file;
+
 	if(f_open(&file, (char*)filename, FA_READ) != FR_OK)
 	{
 		printf("Open file error\r\n");
@@ -89,6 +90,7 @@ void resize_jpeg_to32x32(uint8_t *filename, uint32_t width){
 	printf("Jpeg size %dx%d\r\n",cinfo.output_width, cinfo.output_height);
 
 	resizedImageCounter=0;
+
 	while (cinfo.output_scanline < cinfo.output_height)
 	{
 		(void) jpeg_read_scanlines(&cinfo, buffer, 1);
@@ -108,6 +110,7 @@ void SaveResizedImageToBuffer(uint8_t* buffer){
 	RGB_matrix =  (RGB_typedef*)_aucLine;
 
 	RGB_matrix =  (RGB_typedef*)buffer;
+
 	for(i=0;i<32;i++){
 		resize_image_buffr[resizedImageCounter++]=RGB_matrix[i].R;
 		resize_image_buffr[resizedImageCounter++]=RGB_matrix[i].G;

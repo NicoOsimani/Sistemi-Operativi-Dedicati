@@ -67,7 +67,6 @@ static ai_i8 in_data[AI_NETWORK_IN_1_SIZE_BYTES];
 
 AI_ALIGNED(4)
 static ai_i8 out_data[AI_NETWORK_OUT_1_SIZE_BYTES];
-
 static ai_handle network = AI_HANDLE_NULL ;
 static ai_buffer ai_input[AI_NETWORK_IN_NUM] = AI_NETWORK_IN ;
 static ai_buffer ai_output[AI_NETWORK_OUT_NUM] = AI_NETWORK_OUT ;
@@ -95,6 +94,7 @@ int aiInit(const ai_u8* activations)
 
     /* 2 - Create an instance of the NN */
     err = ai_network_create(&network, AI_NETWORK_DATA_CONFIG);
+
     if (err.type != AI_ERROR_NONE) {
 	    return -1;
     }
@@ -129,6 +129,7 @@ int aiRun(const void *in_data, void *out_data)
 
     /* 2 - Perform the inference */
     nbatch = ai_network_run(network, &ai_input[0], &ai_output[0]);
+
     if (nbatch != 1) {
         err = ai_network_get_error(network);
         // ...
@@ -164,6 +165,7 @@ void MX_X_CUBE_AI_Process(void)
     /* Perform the inference */
     RGB24_to_Float_Asym(&resize_image_buffr[0], (uint8_t*)&in_data[0], 32* 32);
     res = aiRun(in_data, out_data);
+
     if (res) {
         printf("AI error %d\r\n",res);
         BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"AI error");
@@ -172,6 +174,7 @@ void MX_X_CUBE_AI_Process(void)
     printf("Display result\r\n");
     AI_Output_Display((uint8_t*)out_data);
     BSP_LCD_DisplayStringAtLine(9,(uint8_t*)"Prediction:");
+
     for(i=9;i>=7;i--){
         if(predictionval[i]>1){
             sprintf(msg,"%s %.2f%%",cifar10_label[class_name_index[i]],predictionval[i]);
@@ -185,7 +188,6 @@ void MX_X_CUBE_AI_Process(void)
 void test(int class_index)
 {
     int res;
-
     uint32_t Tinf1;
     uint32_t Tinf2;
 
@@ -198,6 +200,7 @@ void test(int class_index)
     Tinf2 = HAL_GetTick();
     nn_inference_time = ((Tinf2>Tinf1)?(Tinf2-Tinf1):((1<<24)-Tinf1+Tinf2));
     tot_inference_time = tot_inference_time + nn_inference_time;
+
     if (res) {
         printf("AI error %d\r\n",res);
         BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"AI error");
@@ -205,16 +208,19 @@ void test(int class_index)
     }
     printf("Display result\r\n");
     AI_Output_Display((uint8_t*)out_data);
-    if(class_name_index[9]==class_index){
+
+    if (class_name_index[9]==class_index){
         right_image=right_image +1;
     }
     image_number = image_number + 1;
-    if(image_number==IMAGE_NUMBER){
+
+    if (image_number==IMAGE_NUMBER){
         sprintf(msg, "Image: %d/%d", image_number, IMAGE_NUMBER);
         BSP_LCD_DisplayStringAtLine(0,(uint8_t*)msg);
 
         accuracy = (float)right_image/image_number*100;
-        if(accuracy==accuracy){
+
+        if (accuracy==accuracy){
             sprintf(msg, "Accuracy: %.2f%%  ", accuracy);
             BSP_LCD_DisplayStringAtLine(2,(uint8_t*)msg);
         }
@@ -230,12 +236,13 @@ void test(int class_index)
         printf("Test completed\r\n");
         BSP_LCD_DisplayStringAtLine(19,(uint8_t*)"Test completed");
     }
-    else{
+    else {
         sprintf(msg, "Image: %d/%d", image_number, IMAGE_NUMBER);
         BSP_LCD_DisplayStringAtLine(0,(uint8_t*)msg);
 
         accuracy = (float)right_image/image_number*100;
-        if(accuracy==accuracy){
+        
+        if (accuracy==accuracy){
             sprintf(msg, "Accuracy: %.2f%%  ", accuracy);
             BSP_LCD_DisplayStringAtLine(2,(uint8_t*)msg);
         }

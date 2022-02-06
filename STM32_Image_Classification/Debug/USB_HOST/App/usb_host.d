@@ -61,8 +61,8 @@ USB_HOST/App/usb_host.o: ../USB_HOST/App/usb_host.c \
  ../LIBJPEG/Target/jconfig.h ../LIBJPEG/Target/jdata_conf.h \
  ../LIBJPEG/Target/jmorecfg.h ../Core/Inc/ltdc.h ../Core/Inc/spi.h \
  ../Core/Inc/usart.h ../USB_HOST/App/usb_host.h ../Core/Inc/gpio.h \
- ../Core/Inc/fmc.h ../X-CUBE-AI/App/app_x-cube-ai.h \
- ../Middlewares/ST/AI/Inc/ai_platform.h ../X-CUBE-AI/App/network.h \
+ ../X-CUBE-AI/App/app_x-cube-ai.h ../Middlewares/ST/AI/Inc/ai_platform.h \
+ ../X-CUBE-AI/App/network.h \
  ../Middlewares/ST/AI/Inc/ai_platform_interface.h \
  ../Middlewares/ST/AI/Inc/datatypes_network.h \
  ../Middlewares/ST/AI/Inc/ai_datatypes_format.h \
@@ -224,8 +224,6 @@ USB_HOST/App/usb_host.o: ../USB_HOST/App/usb_host.c \
 ../USB_HOST/App/usb_host.h:
 
 ../Core/Inc/gpio.h:
-
-../Core/Inc/fmc.h:
 
 ../X-CUBE-AI/App/app_x-cube-ai.h:
 

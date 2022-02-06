@@ -12,7 +12,6 @@
 #include "usart.h"
 #include "usb_host.h"
 #include "gpio.h"
-#include "fmc.h"
 #include "app_x-cube-ai.h"
 
 #include <stdint.h>

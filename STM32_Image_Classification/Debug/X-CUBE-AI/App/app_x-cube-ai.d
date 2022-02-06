@@ -68,7 +68,7 @@ X-CUBE-AI/App/app_x-cube-ai.o: ../X-CUBE-AI/App/app_x-cube-ai.c \
  ../LIBJPEG/Target/jconfig.h ../LIBJPEG/Target/jdata_conf.h \
  ../LIBJPEG/Target/jmorecfg.h ../Core/Inc/ltdc.h ../Core/Inc/spi.h \
  ../Core/Inc/usart.h ../USB_HOST/App/usb_host.h ../Core/Inc/gpio.h \
- ../Core/Inc/fmc.h ../X-CUBE-AI/App/app_x-cube-ai.h \
+ ../X-CUBE-AI/App/app_x-cube-ai.h \
  ../Drivers/BSP/STM32F429I_DISCO/stm32f429i_discovery.h \
  ../Drivers/BSP/STM32F429I_DISCO/stm32f429i_discovery_lcd.h \
  ../Drivers/BSP/STM32F429I_DISCO/stm32f429i_discovery.h \
@@ -242,8 +242,6 @@ X-CUBE-AI/App/app_x-cube-ai.o: ../X-CUBE-AI/App/app_x-cube-ai.c \
 ../USB_HOST/App/usb_host.h:
 
 ../Core/Inc/gpio.h:
-
-../Core/Inc/fmc.h:
 
 ../X-CUBE-AI/App/app_x-cube-ai.h:
 

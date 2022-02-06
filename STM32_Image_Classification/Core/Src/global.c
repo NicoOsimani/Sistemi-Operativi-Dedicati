@@ -29,12 +29,14 @@ void RGB24_to_Float_Asym(uint8_t *pSrc, uint8_t *pDst, uint32_t pixels){
 
 	dummy = (((float)(pivot[i].g)) / 255.0F);
 	uint8_t* pg = (uint8_t*)(void*)&dummy;
+
 	for(j=0;j<4;j++){
 		pDst[x++]=pg[j];
 	}
 
 	dummy = (((float)(pivot[i].r)) / 255.0F);
 	uint8_t* pb = (uint8_t*)(void*)&dummy;
+	
 	for(j=0;j<4;j++){
 		pDst[x++]=pb[j];
 	}
@@ -76,7 +78,6 @@ static void Bubblesort(void){
  				swap_var = predictionval[counter1];
  				predictionval[counter1]=predictionval[counter1+1];
  				predictionval[counter1+1]=swap_var;
-
  				swap_rank = class_name_index[counter1];
  				class_name_index[counter1]=class_name_index[counter1+1];
  				class_name_index[counter1+1]=swap_rank;

@@ -59,8 +59,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../LIBJPEG/Target/jconfig.h ../LIBJPEG/Target/jdata_conf.h \
  ../LIBJPEG/Target/jmorecfg.h ../Core/Inc/ltdc.h ../Core/Inc/spi.h \
  ../Core/Inc/usart.h ../USB_HOST/App/usb_host.h ../Core/Inc/gpio.h \
- ../Core/Inc/fmc.h ../X-CUBE-AI/App/app_x-cube-ai.h \
- ../Middlewares/ST/AI/Inc/ai_platform.h ../X-CUBE-AI/App/network.h \
+ ../X-CUBE-AI/App/app_x-cube-ai.h ../Middlewares/ST/AI/Inc/ai_platform.h \
+ ../X-CUBE-AI/App/network.h \
  ../Middlewares/ST/AI/Inc/ai_platform_interface.h \
  ../Middlewares/ST/AI/Inc/datatypes_network.h \
  ../Middlewares/ST/AI/Inc/ai_datatypes_format.h \
@@ -69,7 +69,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Middlewares/ST/AI/Inc/formats_list.h ../X-CUBE-AI/App/network_data.h \
  ../Core/Inc/global.h ../Core/Inc/crc.h ../Core/Inc/dma2d.h \
  ../Core/Inc/i2c.h ../Core/Inc/ltdc.h ../Core/Inc/spi.h \
- ../Core/Inc/usart.h ../Core/Inc/gpio.h ../Core/Inc/fmc.h \
+ ../Core/Inc/usart.h ../Core/Inc/gpio.h \
  ../Drivers/BSP/STM32F429I_DISCO/stm32f429i_discovery.h \
  ../Drivers/BSP/STM32F429I_DISCO/stm32f429i_discovery_lcd.h \
  ../Drivers/BSP/STM32F429I_DISCO/stm32f429i_discovery.h \
@@ -222,8 +222,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Core/Inc/gpio.h:
 
-../Core/Inc/fmc.h:
-
 ../X-CUBE-AI/App/app_x-cube-ai.h:
 
 ../Middlewares/ST/AI/Inc/ai_platform.h:
@@ -259,8 +257,6 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/usart.h:
 
 ../Core/Inc/gpio.h:
-
-../Core/Inc/fmc.h:
 
 ../Drivers/BSP/STM32F429I_DISCO/stm32f429i_discovery.h:
 
